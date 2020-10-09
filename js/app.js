@@ -14,8 +14,8 @@ var Enemy = function (x, y, speed) {
   this.x = x;
   this.y = y;
   this.speed = speed;
-  this.width = 70;
-  this.height = 70;
+  this.width = 101;
+  this.height = 81;
 
   // The image/sprite for our enemies, this uses
   // a helper we've provided to easily load images
@@ -47,12 +47,18 @@ const Player = function (x, y) {
   this.sprite = "images/char-boy.png";
   this.x = x;
   this.y = y;
-  this.width = 70;
-  this.height = 70;
+  this.width = 101;
+  this.height = 101;
 };
 
 Player.prototype.update = function () {
   if (checkCollisions()) {
+    player.x = initPlayerPosition.x;
+    player.y = initPlayerPosition.y;
+    alert("you are lose!");
+  }
+  if (player.y < 100) {
+    alert("you are win!");
     player.x = initPlayerPosition.x;
     player.y = initPlayerPosition.y;
   }
@@ -65,43 +71,43 @@ Player.prototype.handleInput = function (key) {
   const step = 50;
 
   const visibleFieldWidth = field.width - player.width;
-  const visibleFieldHeight = field.height - player.height;
+  const visibleFieldHeight = field.height - player.height - step;
 
   if (key === "up") {
     this.y -= step;
-    if (this.y < 0) {
-      this.y = 0;
+    if (this.y < step) {
+      this.y = step;
     }
-    //  console.log("y: " + this.y);
+    console.log("y: " + this.y);
   }
   if (key === "down") {
     this.y += step;
     if (this.y > visibleFieldHeight) {
       this.y = visibleFieldHeight;
     }
-    //  console.log("y: " + this.y);
+    console.log("y: " + this.y);
   }
   if (key === "left") {
     this.x -= step;
     if (this.x < 0) {
       this.x = 0;
     }
-    //  console.log("x: " + this.x);
+    console.log("x: " + this.x);
   }
   if (key === "right") {
     this.x += step;
     if (this.x > visibleFieldWidth) {
       this.x = visibleFieldWidth;
     }
-    //  console.log("x: " + this.x);
+    console.log("x: " + this.x);
   }
 };
 
 // Now instantiate your objects.
 
-const enemy1 = new Enemy(0, 220, 200);
-const enemy2 = new Enemy(0, 145, 150);
-const enemy3 = new Enemy(30, 60, 250);
+const enemy1 = new Enemy(0, 280, 120);
+const enemy2 = new Enemy(0, 200, 70);
+const enemy3 = new Enemy(30, 130, 80);
 
 // Place all enemy objects in an array called allEnemies
 const allEnemies = [enemy1, enemy2, enemy3];
