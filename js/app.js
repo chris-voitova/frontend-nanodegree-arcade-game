@@ -1,18 +1,22 @@
 const field = {
   width: 505,
   height: 606,
-  waterPosition: 100,
+  edges: {
+    x: 400,
+    y: 450,
+  },
+  waterPosition: 50,
 };
 
 // Enemies our player must avoid
-const Enemy = function (x, y, speed) {
+const Enemy = function (x, y, speed, width = 101, height = 61) {
   // Variables applied to each of our instances go here,
   // we've provided one for you to get started
   this.x = x;
   this.y = y;
   this.speed = speed;
-  this.width = 101;
-  this.height = 61;
+  this.width = width;
+  this.height = height;
 
   // The image/sprite for our enemies, this uses
   // a helper we've provided to easily load images
@@ -40,57 +44,70 @@ Enemy.prototype.render = function () {
 // This class requires an update(), render() and
 // a handleInput() method.
 
-const Player = function (x, y) {
+const Player = function (x, y, step = 50, width = 101, height = 101) {
   this.sprite = "images/char-boy.png";
   this.x = x;
   this.y = y;
-  this.width = 101;
-  this.height = 101;
-  this.initPositionX = x;
-  this.initPositionY = y;
+  this.width = width;
+  this.height = height;
+  this.initPosition = {
+    x: x,
+    y: y,
+  };
+  this.step = step;
+};
+
+Player.prototype.checkCollisions = function (enemies) {
+  enemies.forEach((enemy) => {
+    if (
+      enemy.x < this.x + this.width &&
+      enemy.x + enemy.width > this.x &&
+      enemy.y < this.y + this.height &&
+      enemy.y + enemy.height > this.y
+    ) {
+      alert("you are lose!");
+      this.goToInitPosition();
+    }
+  });
+};
+
+Player.prototype.goToInitPosition = function () {
+  this.x = this.initPosition.x;
+  this.y = this.initPosition.y;
 };
 
 Player.prototype.update = function () {
-  if (checkCollisions()) {
-    alert("you are lose!");
-    this.x = this.initPositionX;
-    this.y = this.initPositionY;
-  }
-  if (player.y < field.waterPosition) {
+  this.checkCollisions(allEnemies);
+  if (this.y <= field.waterPosition) {
     alert("you are win!");
-    this.x = this.initPositionX;
-    this.y = this.initPositionY;
+    this.goToInitPosition();
   }
 };
 
 Player.prototype.render = function () {
   ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
+
 Player.prototype.handleInput = function (key) {
-  const step = 50;
-
-  const allowedFieldWidth = field.width - player.width;
-  const allowedFieldHeight = field.height - player.height - step;
-
   if (key === "up") {
-    this.y -= step;
+    this.y -= this.step;
   }
   if (key === "down") {
-    this.y += step;
-    if (this.y > allowedFieldHeight) {
-      this.y = allowedFieldHeight;
+    this.y += this.step;
+    if (this.y > field.edges.y) {
+      this.y = field.edges.y;
     }
   }
   if (key === "left") {
-    this.x -= step;
+    this.x -= this.step;
     if (this.x < 0) {
       this.x = 0;
     }
   }
   if (key === "right") {
-    this.x += step;
-    if (this.x > allowedFieldWidth) {
-      this.x = allowedFieldWidth;
+    this.x += this.step;
+    if (this.x > field.edges.x) {
+      this.x = field.edges.x;
     }
   }
 };
@@ -106,19 +123,6 @@ const allEnemies = [enemy1, enemy2, enemy3];
 // Place the player object in a variable called player
 
 const player = new Player(200, 450);
-
-function checkCollisions() {
-  for (let enemy of allEnemies) {
-    if (
-      enemy.x < player.x + player.width &&
-      enemy.x + enemy.width > player.x &&
-      enemy.y < player.y + player.height &&
-      enemy.y + enemy.height > player.y
-    ) {
-      return true;
-    }
-  }
-}
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
