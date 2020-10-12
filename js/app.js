@@ -1,10 +1,7 @@
 const field = {
   width: 505,
   height: 606,
-};
-const initPlayerPosition = {
-  x: 200,
-  y: 400,
+  waterPosition: 100,
 };
 
 // Enemies our player must avoid
@@ -15,7 +12,7 @@ var Enemy = function (x, y, speed) {
   this.y = y;
   this.speed = speed;
   this.width = 101;
-  this.height = 81;
+  this.height = 61;
 
   // The image/sprite for our enemies, this uses
   // a helper we've provided to easily load images
@@ -49,18 +46,20 @@ const Player = function (x, y) {
   this.y = y;
   this.width = 101;
   this.height = 101;
+  this.initPositionX = x;
+  this.initPositionY = y;
 };
 
 Player.prototype.update = function () {
   if (checkCollisions()) {
-    player.x = initPlayerPosition.x;
-    player.y = initPlayerPosition.y;
     alert("you are lose!");
+    this.x = this.initPositionX;
+    this.y = this.initPositionY;
   }
-  if (player.y < 100) {
+  if (player.y < field.waterPosition) {
     alert("you are win!");
-    player.x = initPlayerPosition.x;
-    player.y = initPlayerPosition.y;
+    this.x = this.initPositionX;
+    this.y = this.initPositionY;
   }
 };
 
@@ -70,50 +69,43 @@ Player.prototype.render = function () {
 Player.prototype.handleInput = function (key) {
   const step = 50;
 
-  const visibleFieldWidth = field.width - player.width;
-  const visibleFieldHeight = field.height - player.height - step;
+  const allowedFieldWidth = field.width - player.width;
+  const allowedFieldHeight = field.height - player.height - step;
 
   if (key === "up") {
     this.y -= step;
-    if (this.y < step) {
-      this.y = step;
-    }
-    console.log("y: " + this.y);
   }
   if (key === "down") {
     this.y += step;
-    if (this.y > visibleFieldHeight) {
-      this.y = visibleFieldHeight;
+    if (this.y > allowedFieldHeight) {
+      this.y = allowedFieldHeight;
     }
-    console.log("y: " + this.y);
   }
   if (key === "left") {
     this.x -= step;
     if (this.x < 0) {
       this.x = 0;
     }
-    console.log("x: " + this.x);
   }
   if (key === "right") {
     this.x += step;
-    if (this.x > visibleFieldWidth) {
-      this.x = visibleFieldWidth;
+    if (this.x > allowedFieldWidth) {
+      this.x = allowedFieldWidth;
     }
-    console.log("x: " + this.x);
   }
 };
 
 // Now instantiate your objects.
 
-const enemy1 = new Enemy(0, 280, 120);
-const enemy2 = new Enemy(0, 200, 70);
+const enemy1 = new Enemy(0, 280, 60);
+const enemy2 = new Enemy(0, 200, 100);
 const enemy3 = new Enemy(30, 130, 80);
 
 // Place all enemy objects in an array called allEnemies
 const allEnemies = [enemy1, enemy2, enemy3];
 // Place the player object in a variable called player
 
-const player = new Player(initPlayerPosition.x, initPlayerPosition.y);
+const player = new Player(200, 450);
 
 function checkCollisions() {
   for (let enemy of allEnemies) {
