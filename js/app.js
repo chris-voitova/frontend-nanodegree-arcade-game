@@ -2,7 +2,7 @@ const field = {
   width: 505,
   borderX: 400,
   borderY: 450,
-  waterCoord: 0,
+  waterCoord: 50,
 };
 
 const enemyProps = {
@@ -88,20 +88,17 @@ class Player extends Character {
       enemy.positionY < this.positionY + this.height &&
       enemy.positionY + enemy.height > this.positionY
     ) {
-      alert("you are lose!");
-      this.goToInitPosition();
+      setTimeout(() => {
+        alert("you are lose!");
+        player.goToInitPosition();
+      }, 0);
     }
   }
   goToInitPosition() {
     this.positionX = this.initPosition.positionX;
     this.positionY = this.initPosition.positionY;
   }
-  update() {
-    if (this.positionY <= field.waterCoord) {
-      alert("you are win!");
-      this.goToInitPosition();
-    }
-  }
+  update() {}
   render() {
     ctx.drawImage(Resources.get(this.sprite), this.positionX, this.positionY);
   }
@@ -149,6 +146,12 @@ function checkCollisions() {
   allEnemies.forEach((enemy) => {
     player.checkCollisions(enemy);
   });
+  if (player.positionY <= field.waterCoord) {
+    setTimeout(() => {
+      alert("you are win!");
+      player.goToInitPosition();
+    }, 0);
+  }
 }
 
 // This listens for key presses and sends the keys to your
